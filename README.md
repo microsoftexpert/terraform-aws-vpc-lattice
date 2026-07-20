@@ -43,17 +43,17 @@ Whether it's a star, a professional connection, or a coffee, every gesture helps
 
 ```mermaid
 flowchart LR
- vpc[tf-mod-aws-vpc]
- sg[tf-mod-aws-security-group]
- acm[tf-mod-aws-acm]
- lattice[tf-mod-aws-vpc-lattice]
- ec2[tf-mod-aws-ec2-instance]
- lambda[tf-mod-aws-lambda]
- lb[tf-mod-aws-lb]
- rds[tf-mod-aws-rds / rds-aurora]
- r53[tf-mod-aws-route53-zone]
- cwlog[tf-mod-aws-cloudwatch-log-group]
- s3[tf-mod-aws-s3-bucket]
+ vpc[terraform-aws-vpc]
+ sg[terraform-aws-security-group]
+ acm[terraform-aws-acm]
+ lattice[terraform-aws-vpc-lattice]
+ ec2[terraform-aws-ec2-instance]
+ lambda[terraform-aws-lambda]
+ lb[terraform-aws-lb]
+ rds[terraform-aws-rds / rds-aurora]
+ r53[terraform-aws-route53-zone]
+ cwlog[terraform-aws-cloudwatch-log-group]
+ s3[terraform-aws-s3-bucket]
 
  vpc -- vpc_id / subnet_ids --> lattice
  sg -- security_group_ids --> lattice
@@ -182,7 +182,7 @@ the caller's own SigV4 identity, not a role this module assumes.
 ## 📁 Module Structure
 
 ```
-tf-mod-aws-vpc-lattice/
+terraform-aws-vpc-lattice/
 ├── providers.tf
 ├── variables.tf
 ├── main.tf
@@ -197,7 +197,7 @@ tf-mod-aws-vpc-lattice/
 
 ```hcl
 module "app_mesh" {
-  source = "git::https://github.com/microsoftexpert/tf-mod-aws-vpc-lattice?ref=v1.0.0"
+  source = "git::https://github.com/microsoftexpert/terraform-aws-vpc-lattice?ref=v1.0.0"
 
   service_network_name = "core-app-mesh"
   # auth_type defaults to "AWS_IAM" — secure baseline, no need to set it
@@ -258,15 +258,15 @@ module "app_mesh" {
 
 | Input | Type | Source module |
 |---|---|---|
-| `vpc_associations[*].vpc_id` | `string` | `tf-mod-aws-vpc` |
-| `vpc_associations[*].security_group_ids` | `list(string)` | `tf-mod-aws-security-group` |
-| `resource_gateways[*].vpc_id` / `subnet_ids` | `string` / `list(string)` | `tf-mod-aws-vpc` |
-| `resource_gateways[*].security_group_ids` | `list(string)` | `tf-mod-aws-security-group` |
-| `services[*].certificate_arn` | `string` (regional ACM ARN) | `tf-mod-aws-acm` |
-| `target_groups[*].config.vpc_identifier` | `string` | `tf-mod-aws-vpc` |
-| `target_group_attachments[*].target_id` | `string` (instance id / IP / Lambda ARN / ALB ARN) | `tf-mod-aws-ec2-instance` / `tf-mod-aws-lambda` / `tf-mod-aws-lb` |
-| `resource_configurations[*].definition.arn_resource.arn` | `string` | e.g. `tf-mod-aws-rds`, `tf-mod-aws-rds-aurora` |
-| `access_log_subscriptions[*].destination_arn` | `string` | `tf-mod-aws-cloudwatch-log-group` / `tf-mod-aws-s3-bucket` / `tf-mod-aws-kinesis-firehose` |
+| `vpc_associations[*].vpc_id` | `string` | `terraform-aws-vpc` |
+| `vpc_associations[*].security_group_ids` | `list(string)` | `terraform-aws-security-group` |
+| `resource_gateways[*].vpc_id` / `subnet_ids` | `string` / `list(string)` | `terraform-aws-vpc` |
+| `resource_gateways[*].security_group_ids` | `list(string)` | `terraform-aws-security-group` |
+| `services[*].certificate_arn` | `string` (regional ACM ARN) | `terraform-aws-acm` |
+| `target_groups[*].config.vpc_identifier` | `string` | `terraform-aws-vpc` |
+| `target_group_attachments[*].target_id` | `string` (instance id / IP / Lambda ARN / ALB ARN) | `terraform-aws-ec2-instance` / `terraform-aws-lambda` / `terraform-aws-lb` |
+| `resource_configurations[*].definition.arn_resource.arn` | `string` | e.g. `terraform-aws-rds`, `terraform-aws-rds-aurora` |
+| `access_log_subscriptions[*].destination_arn` | `string` | `terraform-aws-cloudwatch-log-group` / `terraform-aws-s3-bucket` / `terraform-aws-kinesis-firehose` |
 
 ### Emits
 
@@ -275,15 +275,15 @@ module "app_mesh" {
 | `id` | Service network id | tagging, cross-references |
 | `arn` | Service network ARN — cross-resource reference type | RAM shares, auth/resource policies, cross-account associations |
 | `name` | Service network name | audit |
-| `service_ids` / `service_arns` | Map of service key → id/ARN | RAM shares, `tf-mod-aws-route53-zone` |
+| `service_ids` / `service_arns` | Map of service key → id/ARN | RAM shares, `terraform-aws-route53-zone` |
 | `service_dns_entries` | Map of service key → DNS entry | Route 53 records |
 | `target_group_ids` / `target_group_arns` | Map of target-group key → id/ARN | audit, external wiring |
 | `listener_ids` / `listener_arns` | Map of listener key → id/ARN | import, audit |
 | `listener_rule_ids` / `listener_rule_arns` | Map of listener-rule key → id/ARN | audit |
-| `resource_gateway_ids` / `resource_gateway_arns` | Map of resource-gateway key → id/ARN | `tf-mod-aws-vpc` subnet planning |
+| `resource_gateway_ids` / `resource_gateway_arns` | Map of resource-gateway key → id/ARN | `terraform-aws-vpc` subnet planning |
 | `resource_configuration_ids` / `resource_configuration_arns` | Map of resource-configuration key → id/ARN | resource-association wiring |
 | `domain_verification_ids` | Map of domain-verification key → id | `resource_configurations[*].domain_verification_key` |
-| `domain_verification_txt_records` | Map of domain-verification key → `{name, value}` | `tf-mod-aws-route53-zone` (TXT proof) |
+| `domain_verification_txt_records` | Map of domain-verification key → `{name, value}` | `terraform-aws-route53-zone` (TXT proof) |
 | `auth_policy_states` | Map of auth-policy key → state | audit |
 | `access_log_subscription_arns` | Map of access-log-subscription key → ARN | audit |
 | `tags_all` | All tags incl. provider `default_tags` | governance/audit |
@@ -297,7 +297,7 @@ module "app_mesh" {
 
 ```hcl
 module "mesh" {
-  source = "git::https://github.com/microsoftexpert/tf-mod-aws-vpc-lattice?ref=v1.0.0"
+  source = "git::https://github.com/microsoftexpert/terraform-aws-vpc-lattice?ref=v1.0.0"
 
   service_network_name = "sandbox-mesh"
 
@@ -517,7 +517,7 @@ services = {
   }
 }
 
-# Publish the returned TXT record via tf-mod-aws-route53-zone:
+# Publish the returned TXT record via terraform-aws-route53-zone:
 # name = module.mesh.domain_verification_txt_records["apps_example_com"].name
 # value = module.mesh.domain_verification_txt_records["apps_example_com"].value
 ```
@@ -587,7 +587,7 @@ services = {
 # }
 
 module "mesh" {
-  source = "git::https://github.com/microsoftexpert/tf-mod-aws-vpc-lattice?ref=v1.0.0"
+  source = "git::https://github.com/microsoftexpert/terraform-aws-vpc-lattice?ref=v1.0.0"
 
   service_network_name = "core-app-mesh"
 
@@ -605,34 +605,34 @@ module "mesh" {
 
 ```hcl
 module "vpc" {
-  source = "git::https://github.com/microsoftexpert/tf-mod-aws-vpc?ref=v1.0.0"
+  source = "git::https://github.com/microsoftexpert/terraform-aws-vpc?ref=v1.0.0"
   name   = "core-vpc"
   cidr   = "10.20.0.0/16"
 }
 
 module "app_sg" {
-  source = "git::https://github.com/microsoftexpert/tf-mod-aws-security-group?ref=v1.0.0"
+  source = "git::https://github.com/microsoftexpert/terraform-aws-security-group?ref=v1.0.0"
   name   = "app-mesh-sg"
   vpc_id = module.vpc.id
 }
 
 module "acm_orders" {
-  source      = "git::https://github.com/microsoftexpert/tf-mod-aws-acm?ref=v1.0.0"
+  source      = "git::https://github.com/microsoftexpert/terraform-aws-acm?ref=v1.0.0"
   domain_name = "orders.apps.example.com"
 }
 
 module "lambda_orders" {
-  source        = "git::https://github.com/microsoftexpert/tf-mod-aws-lambda?ref=v1.0.0"
+  source        = "git::https://github.com/microsoftexpert/terraform-aws-lambda?ref=v1.0.0"
   function_name = "orders-handler"
 }
 
 module "orders_log_group" {
-  source = "git::https://github.com/microsoftexpert/tf-mod-aws-cloudwatch-log-group?ref=v1.0.0"
+  source = "git::https://github.com/microsoftexpert/terraform-aws-cloudwatch-log-group?ref=v1.0.0"
   name   = "/vpc-lattice/orders"
 }
 
 module "mesh" {
-  source = "git::https://github.com/microsoftexpert/tf-mod-aws-vpc-lattice?ref=v1.0.0"
+  source = "git::https://github.com/microsoftexpert/terraform-aws-vpc-lattice?ref=v1.0.0"
 
   service_network_name = "core-app-mesh"
 
@@ -797,7 +797,7 @@ caller-supplied and already visible in the caller's own configuration.
  per service network (or per sensitive service) in production.
 - **Every child collection is `for_each` over `map(object(...))`** keyed by a
  stable caller string — no `count` — so adding/removing one entry never
- re-indexes another (mirrors `tf-mod-aws-lb`'s target-group/listener/rule
+ re-indexes another (mirrors `terraform-aws-lb`'s target-group/listener/rule
  pattern).
 - **Deeply-typed `object` schemas throughout** — no `any`, no loose `map` for
  structured data — with `validation {}` blocks enforcing the closed value sets
@@ -810,7 +810,7 @@ caller-supplied and already visible in the caller's own configuration.
 ## 🚀 Runbook
 
 ```powershell
-cd tf-mod-aws-vpc-lattice
+cd terraform-aws-vpc-lattice
 terraform init -backend=false
 terraform validate
 terraform fmt -check

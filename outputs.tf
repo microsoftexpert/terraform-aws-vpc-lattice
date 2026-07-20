@@ -51,7 +51,7 @@ output "service_ids" {
 }
 
 output "service_arns" {
- description = "Map of services key => service ARN. Consumed by AWS RAM shares and tf-mod-aws-route53-zone (custom-domain CNAME target)."
+ description = "Map of services key => service ARN. Consumed by AWS RAM shares and terraform-aws-route53-zone (custom-domain CNAME target)."
  value = { for k, s in aws_vpclattice_service.this: k => s.arn }
 }
 
@@ -103,7 +103,7 @@ output "listener_rule_arns" {
 ###############################################################################
 
 output "resource_gateway_ids" {
- description = "Map of resource_gateways key => id. Wire into tf-mod-aws-vpc subnet-capacity planning (ENIs are placed per AZ, similar to a NAT gateway)."
+ description = "Map of resource_gateways key => id. Wire into terraform-aws-vpc subnet-capacity planning (ENIs are placed per AZ, similar to a NAT gateway)."
  value = { for k, rg in aws_vpclattice_resource_gateway.this: k => rg.id }
 }
 
@@ -139,7 +139,7 @@ output "domain_verification_ids" {
 output "domain_verification_txt_records" {
  description = <<EOT
 Map of domain_verifications key => { name, value } — the TXT record that must be
-published (e.g. via tf-mod-aws-route53-zone) to complete ownership verification
+published (e.g. via terraform-aws-route53-zone) to complete ownership verification
 of the corresponding custom domain.
 EOT
  value = {

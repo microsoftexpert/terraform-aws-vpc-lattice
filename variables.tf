@@ -50,7 +50,7 @@ variable "vpc_associations" {
  description = <<EOT
 Map of VPC-to-service-network associations keyed by a stable name, each
 rendered as one aws_vpclattice_service_network_vpc_association. Wire vpc_id
-from tf-mod-aws-vpc and security_group_ids from tf-mod-aws-security-group.
+from terraform-aws-vpc and security_group_ids from terraform-aws-security-group.
 
  - vpc_id: ID of the VPC to associate (required).
  - security_group_ids: security groups controlling traffic between the VPC
@@ -100,7 +100,7 @@ access-log-subscription entries via resource_identifier_key.
  override of the network-level auth_type.
  - custom_domain_name: custom domain name for the service (optional).
  - certificate_arn: ACM certificate ARN for the custom domain, same Region
- as this module (wire from tf-mod-aws-acm).
+ as this module (wire from terraform-aws-acm).
  - tags: extra tags merged over module tags for this service.
 EOT
  type = map(object({
@@ -138,7 +138,7 @@ aws_vpclattice_target_group. The key is referenced by target_group_attachments
  - type: "INSTANCE" | "IP" | "LAMBDA" | "ALB".
  - config: target-group configuration (required for INSTANCE/IP/ALB; omit
  entirely, or leave null, for LAMBDA).
- - vpc_identifier: VPC ID (wire from tf-mod-aws-vpc).
+ - vpc_identifier: VPC ID (wire from terraform-aws-vpc).
  - ip_address_type: "IPV4" | "IPV6" (IP type only).
  - lambda_event_structure_version: "V1" | "V2" (LAMBDA type only).
  - port / protocol / protocol_version: routing to the targets
@@ -202,8 +202,8 @@ aws_vpclattice_target_group_attachment.
 
  - target_group_key: key of the target group (in target_groups) to register to.
  - target_id: instance ID (INSTANCE), IP address (IP), Lambda function
- ARN (LAMBDA, wire from tf-mod-aws-lambda), or ALB ARN
- (ALB, wire from tf-mod-aws-lb).
+ ARN (LAMBDA, wire from terraform-aws-lambda), or ALB ARN
+ (ALB, wire from terraform-aws-lb).
  - port: override port (defaults to the target group port).
 EOT
  type = map(object({
@@ -378,8 +378,8 @@ EOT
 variable "resource_gateways" {
  description = <<EOT
 Map of resource gateways keyed by a stable name, each rendered as one
-aws_vpclattice_resource_gateway. Wire vpc_id/subnet_ids from tf-mod-aws-vpc and
-security_group_ids from tf-mod-aws-security-group. The key is referenced by
+aws_vpclattice_resource_gateway. Wire vpc_id/subnet_ids from terraform-aws-vpc and
+security_group_ids from terraform-aws-security-group. The key is referenced by
 resource_configurations (resource_gateway_key).
 
  - name: explicit gateway name. Defaults to the map key.
@@ -429,7 +429,7 @@ variable "domain_verifications" {
  description = <<EOT
 Map of custom-domain ownership proofs keyed by a stable name, each rendered as
 one aws_vpclattice_domain_verification. Pair the emitted TXT record output with
-a record in tf-mod-aws-route53-zone to complete verification. The key is
+a record in terraform-aws-route53-zone to complete verification. The key is
 referenced by resource_configurations (domain_verification_key).
 
  - domain_name: the domain name to verify ownership for.
@@ -634,8 +634,8 @@ documented quick-start exception.
  - resource_identifier_key: "service_network" (the keystone) or a key from
  services (a specific service).
  - destination_arn: ARN of the log destination. Wire from
- tf-mod-aws-cloudwatch-log-group, tf-mod-aws-s3-bucket,
- or tf-mod-aws-kinesis-firehose. FORCE-NEW.
+ terraform-aws-cloudwatch-log-group, terraform-aws-s3-bucket,
+ or terraform-aws-kinesis-firehose. FORCE-NEW.
  - service_network_log_type: "SERVICE" (default) | "RESOURCE" — which traffic
  class is logged when subscribed at the service
  network level. FORCE-NEW.

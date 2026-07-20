@@ -31,7 +31,7 @@ terraform {
 # run) happens outside this module.
 #
 # module "app_mesh" {
-# source = "git::https://github.com/microsoftexpert/tf-mod-aws-vpc-lattice?ref=v1.0.0"
+# source = "git::https://github.com/microsoftexpert/terraform-aws-vpc-lattice?ref=v1.0.0"
 # # inherits the default `aws` provider (whatever Region it points at)
 # service_network_name = "core-app-mesh"
 # vpc_associations = {

@@ -1,4 +1,4 @@
-# tf-mod-aws-vpc-lattice — SCOPE
+# terraform-aws-vpc-lattice — SCOPE
 
 Composite module for **Amazon VPC Lattice** — the modern, IAM-native application
 networking layer that connects services across VPCs and accounts without the
@@ -34,28 +34,28 @@ The module manages the following (allow-list — 15 resource types):
 
 Referenced by `id`/`arn`, never created here:
 
-- VPC — `vpc_associations[*].vpc_id`, `resource_gateways[*].vpc_id` (from `tf-mod-aws-vpc`)
-- Subnets — `resource_gateways[*].subnet_ids` (from `tf-mod-aws-vpc`)
-- Security groups — `vpc_associations[*].security_group_ids`, `resource_gateways[*].security_group_ids` (from `tf-mod-aws-security-group`)
-- ACM certificate — `services[*].certificate_arn` (from `tf-mod-aws-acm`, regional)
-- Target resources — EC2 instance IDs (`tf-mod-aws-ec2-instance`), IP addresses, Lambda function ARNs (`tf-mod-aws-lambda`, Phase 7), or ALB ARNs (`tf-mod-aws-lb`) referenced by `target_group_attachments[*].target_id`
+- VPC — `vpc_associations[*].vpc_id`, `resource_gateways[*].vpc_id` (from `terraform-aws-vpc`)
+- Subnets — `resource_gateways[*].subnet_ids` (from `terraform-aws-vpc`)
+- Security groups — `vpc_associations[*].security_group_ids`, `resource_gateways[*].security_group_ids` (from `terraform-aws-security-group`)
+- ACM certificate — `services[*].certificate_arn` (from `terraform-aws-acm`, regional)
+- Target resources — EC2 instance IDs (`terraform-aws-ec2-instance`), IP addresses, Lambda function ARNs (`terraform-aws-lambda`, Phase 7), or ALB ARNs (`terraform-aws-lb`) referenced by `target_group_attachments[*].target_id`
 - Resource-configuration targets — RDS/other resource ARNs (`resource_configurations[*].definition.arn_resource.arn`), on-prem/other-VPC DNS names or IPs
-- Access-log destinations — CloudWatch Log Group ARN (`tf-mod-aws-cloudwatch-log-group`), S3 bucket ARN (`tf-mod-aws-s3-bucket`), or Kinesis Firehose ARN (`tf-mod-aws-kinesis-firehose`, Phase 2)
+- Access-log destinations — CloudWatch Log Group ARN (`terraform-aws-cloudwatch-log-group`), S3 bucket ARN (`terraform-aws-s3-bucket`), or Kinesis Firehose ARN (`terraform-aws-kinesis-firehose`, Phase 2)
 
 ## Consumes
 
 | Input | Type | Source module |
 |---|---|---|
-| `vpc_associations[*].vpc_id` | `string` (VPC id) | `tf-mod-aws-vpc` |
-| `vpc_associations[*].security_group_ids` | `list(string)` | `tf-mod-aws-security-group` |
-| `resource_gateways[*].vpc_id` | `string` (VPC id) | `tf-mod-aws-vpc` |
-| `resource_gateways[*].subnet_ids` | `list(string)` | `tf-mod-aws-vpc` |
-| `resource_gateways[*].security_group_ids` | `list(string)` | `tf-mod-aws-security-group` |
-| `services[*].certificate_arn` | `string` (ACM cert ARN, regional) | `tf-mod-aws-acm` |
-| `target_group_attachments[*].target_id` | `string` (instance id / IP / Lambda ARN / ALB ARN) | `tf-mod-aws-ec2-instance` / `tf-mod-aws-lambda` / `tf-mod-aws-lb` |
-| `target_groups[*].config.vpc_identifier` | `string` (VPC id, omitted for LAMBDA) | `tf-mod-aws-vpc` |
-| `resource_configurations[*].definition.arn_resource.arn` | `string` (ARN of the non-Lattice resource) | e.g. `tf-mod-aws-rds`, `tf-mod-aws-rds-aurora` |
-| `access_log_subscriptions[*].destination_arn` | `string` (log destination ARN) | `tf-mod-aws-cloudwatch-log-group` / `tf-mod-aws-s3-bucket` / `tf-mod-aws-kinesis-firehose` |
+| `vpc_associations[*].vpc_id` | `string` (VPC id) | `terraform-aws-vpc` |
+| `vpc_associations[*].security_group_ids` | `list(string)` | `terraform-aws-security-group` |
+| `resource_gateways[*].vpc_id` | `string` (VPC id) | `terraform-aws-vpc` |
+| `resource_gateways[*].subnet_ids` | `list(string)` | `terraform-aws-vpc` |
+| `resource_gateways[*].security_group_ids` | `list(string)` | `terraform-aws-security-group` |
+| `services[*].certificate_arn` | `string` (ACM cert ARN, regional) | `terraform-aws-acm` |
+| `target_group_attachments[*].target_id` | `string` (instance id / IP / Lambda ARN / ALB ARN) | `terraform-aws-ec2-instance` / `terraform-aws-lambda` / `terraform-aws-lb` |
+| `target_groups[*].config.vpc_identifier` | `string` (VPC id, omitted for LAMBDA) | `terraform-aws-vpc` |
+| `resource_configurations[*].definition.arn_resource.arn` | `string` (ARN of the non-Lattice resource) | e.g. `terraform-aws-rds`, `terraform-aws-rds-aurora` |
+| `access_log_subscriptions[*].destination_arn` | `string` (log destination ARN) | `terraform-aws-cloudwatch-log-group` / `terraform-aws-s3-bucket` / `terraform-aws-kinesis-firehose` |
 
 ## Required IAM permissions
 
@@ -120,18 +120,18 @@ principal at request time, not a role owned by this module.
 | `arn` | Service network ARN — cross-resource reference type | RAM share, resource/auth policies, cross-account associations |
 | `name` | Service network name | audit, RAM share naming |
 | `service_ids` | Map of service key → id | audit |
-| `service_arns` | Map of service key → ARN | RAM share, `tf-mod-aws-route53-zone` (custom-domain CNAME target) |
+| `service_arns` | Map of service key → ARN | RAM share, `terraform-aws-route53-zone` (custom-domain CNAME target) |
 | `service_dns_entries` | Map of service key → DNS entry (domain/hosted zone) | Route 53 records |
 | `target_group_ids` | Map of target-group key → id | audit |
 | `target_group_arns` | Map of target-group key → ARN | listener/rule wiring outside this call |
 | `listener_ids` | Map of listener key → standalone listener id | import, audit |
 | `listener_arns` | Map of listener key → ARN | audit |
-| `resource_gateway_ids` | Map of resource-gateway key → id | `tf-mod-aws-vpc` (subnet capacity planning) |
+| `resource_gateway_ids` | Map of resource-gateway key → id | `terraform-aws-vpc` (subnet capacity planning) |
 | `resource_gateway_arns` | Map of resource-gateway key → ARN | audit |
 | `resource_configuration_ids` | Map of resource-configuration key → id | resource association wiring |
 | `resource_configuration_arns` | Map of resource-configuration key → ARN | audit |
 | `domain_verification_ids` | Map of domain-verification key → id | `resource_configurations[*].domain_verification_key` |
-| `domain_verification_txt_records` | Map of domain-verification key → `{name, value}` | `tf-mod-aws-route53-zone` (TXT record for proof) |
+| `domain_verification_txt_records` | Map of domain-verification key → `{name, value}` | `terraform-aws-route53-zone` (TXT record for proof) |
 | `access_log_subscription_arns` | Map of access-log-subscription key → ARN | audit |
 | `tags_all` | All tags incl. provider `default_tags` | governance/audit |
 
@@ -200,7 +200,7 @@ principal at request time, not a role owned by this module.
   policies, access-log subscriptions) so a single call produces a complete,
   IAM-authenticated, audit-logged application-networking mesh.
 - Every child collection is `for_each` over `map(object(...))` keyed by a stable
-  caller string — no `count` — mirroring `tf-mod-aws-lb`'s target-group/listener/
+  caller string — no `count` — mirroring `terraform-aws-lb`'s target-group/listener/
   rule pattern. Cross-references between collections (e.g. a listener's
   `service_key`, a listener rule's `listener_key`, a resource configuration's
   `resource_gateway_key`) resolve through the sibling map's key, not a numeric index.
@@ -213,7 +213,7 @@ principal at request time, not a role owned by this module.
   types rather than four separate variables, because a caller keys the whole
   target-group map by a single stable string regardless of type; `validation {}`
   blocks catch a type/config mismatch at plan time instead of a runtime API error.
-- `tf-mod-aws-vpc-lattice` sits below `tf-mod-aws-lambda` (Phase 7) and
-  `tf-mod-aws-rds`/`tf-mod-aws-rds-aurora` in dependency order for target
-  registration, but above `tf-mod-aws-vpc`/`tf-mod-aws-security-group`/`tf-mod-aws-acm`
+- `terraform-aws-vpc-lattice` sits below `terraform-aws-lambda` (Phase 7) and
+  `terraform-aws-rds`/`terraform-aws-rds-aurora` in dependency order for target
+  registration, but above `terraform-aws-vpc`/`terraform-aws-security-group`/`terraform-aws-acm`
   which it consumes directly.
